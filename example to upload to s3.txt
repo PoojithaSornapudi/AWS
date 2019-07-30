@@ -1,0 +1,17 @@
+import boto
+from boto.s3.key import Key
+import requests
+
+#setup the bucket
+c = boto.connect_s3(your_s3_key, your_s3_key_secret)
+b = c.get_bucket(bucket, validate=False)
+
+#download the file
+url = "http://en.wikipedia.org/static/images/project-logos/enwiki.png"
+r = requests.get(url)
+if r.status_code == 200:
+    #upload the file
+    k = Key(b)
+    k.key = "image1.png"
+    k.content_type = r.headers['content-type']
+    k.set_contents_from_string(r.content)
