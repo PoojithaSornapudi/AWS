@@ -1,0 +1,33 @@
+from __future__ import print_function
+import pg8000 
+import json
+
+#import json
+
+
+"""def lambda_handler(event,context):
+    return {'statusCode':200,'body':json.dumps("hi hello")}"""
+
+def get_connection(event,context):
+    con=pg8000.connect(database='people', host='clusterhost',port= 5439, user= 'awsuser', password='password',ssl=True)
+    cur=con.cursor()
+    sql="""copy public.person 
+    from 's3://pylibpooji/people-example2.csv'
+    credentials 'aws_access_key_id=someid;aws_secret_access_key=somekey' 
+    csv 
+    IGNOREHEADER 1;"""
+    
+    print(sql)
+    try:
+        cur.execute(sql)
+        cur.execute("commit;")
+        print("Success")
+    except:
+        print("Failed")
+    cur.close()
+    con.close()
+    
+   
+   
+
+    
